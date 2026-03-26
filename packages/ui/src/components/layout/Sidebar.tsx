@@ -1,21 +1,73 @@
 import { useState } from 'react'
 import { NavLink } from 'react-router-dom'
+import {
+  LayoutDashboard,
+  Users,
+  MapPin,
+  CalendarClock,
+  ArrowLeftRight,
+  Scale,
+  BookOpen,
+  StickyNote,
+  Search,
+  Network,
+  Save,
+  ArrowRightLeft,
+  ChevronLeft,
+  ChevronRight,
+  Menu,
+  X,
+} from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
 
-const navItems = [
-  { to: '/', label: 'Dashboard', icon: '#' },
-  { to: '/characters', label: 'Personnages', icon: 'P' },
-  { to: '/locations', label: 'Lieux', icon: 'L' },
-  { to: '/events', label: 'Evenements', icon: 'E' },
-  { to: '/interactions', label: 'Interactions', icon: 'I' },
-  { to: '/world-rules', label: 'Regles', icon: 'R' },
-  { to: '/research', label: 'Recherches', icon: 'D' },
-  { to: '/notes', label: 'Notes', icon: 'N' },
-  { to: '/graph', label: 'Graph', icon: 'G' },
-  { to: '/timeline', label: 'Timeline', icon: 'T' },
-  { to: '/search', label: 'Recherche', icon: '?' },
-  { to: '/backups', label: 'Backups', icon: 'B' },
-  { to: '/import-export', label: 'Import/Export', icon: 'X' },
+interface NavItem {
+  to: string
+  label: string
+  icon: LucideIcon
+}
+
+const mainNav: NavItem[] = [
+  { to: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { to: '/characters', label: 'Personnages', icon: Users },
+  { to: '/locations', label: 'Lieux', icon: MapPin },
+  { to: '/events', label: 'Evenements', icon: CalendarClock },
+  { to: '/interactions', label: 'Interactions', icon: ArrowLeftRight },
+  { to: '/world-rules', label: 'Regles', icon: Scale },
+  { to: '/research', label: 'Recherches', icon: BookOpen },
+  { to: '/notes', label: 'Notes', icon: StickyNote },
 ]
+
+const toolsNav: NavItem[] = [
+  { to: '/search', label: 'Recherche', icon: Search },
+  { to: '/graph', label: 'Graph', icon: Network },
+  { to: '/timeline', label: 'Timeline', icon: CalendarClock },
+  { to: '/backups', label: 'Backups', icon: Save },
+  { to: '/import-export', label: 'Import/Export', icon: ArrowRightLeft },
+]
+
+function NavSection({ items, collapsed }: { items: NavItem[]; collapsed: boolean }) {
+  return (
+    <>
+      {items.map((item) => (
+        <NavLink
+          key={item.to}
+          to={item.to}
+          end={item.to === '/'}
+          className={({ isActive }) =>
+            `flex items-center px-2.5 py-2 rounded-lg gap-2.5 text-[13px] mx-1.5 mb-0.5 transition-colors ${
+              isActive
+                ? 'bg-[var(--sidebar-accent)] text-[var(--sidebar-foreground)]'
+                : 'text-[var(--sidebar-foreground)]/70 hover:bg-[var(--sidebar-accent)]/50'
+            }`
+          }
+        >
+          <item.icon className="w-4 h-4 shrink-0 opacity-70" />
+          {!collapsed && <span>{item.label}</span>}
+        </NavLink>
+      ))}
+    </>
+  )
+}
 
 export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(false)
@@ -27,7 +79,7 @@ export default function Sidebar() {
         onClick={() => setCollapsed(!collapsed)}
         className="lg:hidden fixed top-3 left-3 z-50 bg-[var(--sidebar-accent)] text-[var(--sidebar-foreground)] w-10 h-10 rounded-lg flex items-center justify-center"
       >
-        {collapsed ? '>' : 'x'}
+        {collapsed ? <Menu className="w-4 h-4" /> : <X className="w-4 h-4" />}
       </button>
 
       <aside
@@ -42,31 +94,17 @@ export default function Sidebar() {
             onClick={() => setCollapsed(!collapsed)}
             className="hidden lg:flex ml-auto w-6 h-6 items-center justify-center rounded text-[var(--sidebar-foreground)]/70 hover:bg-[var(--sidebar-accent)]/50 transition-colors"
           >
-            {collapsed ? '>' : '<'}
+            {collapsed ? <ChevronRight className="w-3.5 h-3.5" /> : <ChevronLeft className="w-3.5 h-3.5" />}
           </button>
         </div>
 
         <nav className="flex-1 py-2 overflow-y-auto">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              end={item.to === '/'}
-              onClick={() => {
-                if (window.innerWidth < 1024) setCollapsed(true)
-              }}
-              className={({ isActive }) =>
-                `flex items-center px-2.5 py-2 rounded-lg gap-2.5 text-[13px] mx-1.5 mb-0.5 transition-colors ${
-                  isActive
-                    ? 'bg-[var(--sidebar-accent)] text-[var(--sidebar-foreground)]'
-                    : 'text-[var(--sidebar-foreground)]/70 hover:bg-[var(--sidebar-accent)]/50'
-                }`
-              }
-            >
-              <span className="w-5 text-center font-mono text-xs opacity-60 shrink-0">{item.icon}</span>
-              {!collapsed && <span>{item.label}</span>}
-            </NavLink>
-          ))}
+          <NavSection items={mainNav} collapsed={collapsed} />
+
+          {/* Separateur */}
+          <div className="mx-3 my-2 border-t border-[var(--sidebar-border)]" />
+
+          <NavSection items={toolsNav} collapsed={collapsed} />
         </nav>
       </aside>
 
