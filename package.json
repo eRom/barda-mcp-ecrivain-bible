@@ -6,8 +6,8 @@
     "test": "pnpm -r test",
     "dev:mcp": "pnpm --filter @barda/mcp dev",
     "dev:ui": "pnpm --filter @barda/ui dev",
-    "dev": "pnpm --filter @barda/mcp dev -- --ui",
-    "start": "npx barda-ecrivain-bible --ui"
+    "dev": "pnpm --filter @barda/ui build:prod && pnpm --filter @barda/mcp dev -- --ui",
+    "start": "pnpm --filter @barda/ui build:prod && pnpm --filter @barda/mcp dev -- --ui"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
