@@ -27,8 +27,11 @@ function GraphHighlighter({ selectedNodeId }: { selectedNodeId: string | null })
   const sigma = useSigma()
 
   useEffect(() => {
+    // Capture camera state BEFORE any change
+    const camera = sigma.getCamera()
+    const cameraState = camera.getState()
+
     if (!selectedNodeId) {
-      // Reset: remove all highlight overrides
       sigma.setSetting('nodeReducer', (_node, data) => ({ ...data }))
       sigma.setSetting('edgeReducer', (_edge, data) => ({
         ...data,
@@ -36,20 +39,20 @@ function GraphHighlighter({ selectedNodeId }: { selectedNodeId: string | null })
         size: data.size || 0.5,
       }))
       sigma.refresh()
+      // Restore camera position
+      camera.setState(cameraState)
       return
     }
 
     const graph = sigma.getGraph()
     if (!graph.hasNode(selectedNodeId)) return
 
-    // Build the set of connected nodes
     const connectedNodes = new Set<string>()
     connectedNodes.add(selectedNodeId)
     graph.forEachNeighbor(selectedNodeId, (neighbor) => {
       connectedNodes.add(neighbor)
     })
 
-    // Build the set of connected edges
     const connectedEdges = new Set<string>()
     graph.forEachEdge(selectedNodeId, (edge) => {
       connectedEdges.add(edge)
@@ -59,12 +62,10 @@ function GraphHighlighter({ selectedNodeId }: { selectedNodeId: string | null })
       if (connectedNodes.has(node)) {
         return {
           ...data,
-          // Selected node gets a highlight ring effect via larger size
-          size: node === selectedNodeId ? (data.size || 10) * 1.4 : data.size,
+          size: node === selectedNodeId ? (data.size || 10) * 1.3 : data.size,
           zIndex: 1,
         }
       }
-      // Dim non-connected nodes
       return {
         ...data,
         color: '#333333',
@@ -83,7 +84,6 @@ function GraphHighlighter({ selectedNodeId }: { selectedNodeId: string | null })
           zIndex: 1,
         }
       }
-      // Dim non-connected edges
       return {
         ...data,
         color: '#1a1a1a',
@@ -93,6 +93,8 @@ function GraphHighlighter({ selectedNodeId }: { selectedNodeId: string | null })
     })
 
     sigma.refresh()
+    // Restore camera — no zoom/pan change
+    camera.setState(cameraState)
   }, [sigma, selectedNodeId])
 
   return null
