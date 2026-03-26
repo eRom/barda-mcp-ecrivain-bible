@@ -36,13 +36,26 @@ export interface GraphNode {
   description?: string | null
 }
 
+// Les tools list retournent des formats differents : { characters: [...] }, { results: [...] }, { events: [...] }
+// Cette fonction extrait le tableau depuis n'importe quel format
+function extractArray<T>(data: unknown): T[] {
+  if (!data || typeof data !== 'object') return []
+  if (Array.isArray(data)) return data as T[]
+  const obj = data as Record<string, unknown>
+  // Cherche la premiere valeur qui est un tableau
+  for (const key of Object.keys(obj)) {
+    if (Array.isArray(obj[key])) return obj[key] as T[]
+  }
+  return []
+}
+
 export function useGraph() {
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null)
 
-  const characters = useMcpQuery<Character[]>('list_characters')
-  const locations = useMcpQuery<Location[]>('list_locations')
-  const events = useMcpQuery<Event[]>('list_events')
-  const interactions = useMcpQuery<Interaction[]>('list_interactions')
+  const characters = useMcpQuery<unknown>('list_characters', { limit: 500 })
+  const locations = useMcpQuery<unknown>('list_locations', { limit: 500 })
+  const events = useMcpQuery<unknown>('list_events', { limit: 500 })
+  const interactions = useMcpQuery<unknown>('list_interactions', { limit: 500 })
 
   const isLoading =
     characters.isLoading || locations.isLoading || events.isLoading || interactions.isLoading
@@ -50,9 +63,14 @@ export function useGraph() {
   const graph = useMemo(() => {
     const g = new Graph({ multi: false, type: 'undirected' })
 
+    const charList = extractArray<Character>(characters.data)
+    const locList = extractArray<Location>(locations.data)
+    const evtList = extractArray<Event>(events.data)
+    const interList = extractArray<Interaction>(interactions.data)
+
     // Add character nodes
-    if (characters.data) {
-      for (const c of characters.data) {
+    if (charList.length > 0) {
+      for (const c of charList) {
         g.addNode(c.id, {
           label: c.name,
           type: 'character' as EntityType,
@@ -66,8 +84,8 @@ export function useGraph() {
     }
 
     // Add location nodes
-    if (locations.data) {
-      for (const l of locations.data) {
+    if (locList.length > 0) {
+      for (const l of locList) {
         g.addNode(l.id, {
           label: l.name,
           type: 'location' as EntityType,
@@ -81,8 +99,8 @@ export function useGraph() {
     }
 
     // Add event nodes
-    if (events.data) {
-      for (const e of events.data) {
+    if (evtList.length > 0) {
+      for (const e of evtList) {
         g.addNode(e.id, {
           label: e.title,
           type: 'event' as EntityType,
@@ -96,8 +114,8 @@ export function useGraph() {
     }
 
     // Add interaction nodes
-    if (interactions.data) {
-      for (const i of interactions.data) {
+    if (interList.length > 0) {
+      for (const i of interList) {
         const label =
           i.description.length > 40 ? i.description.slice(0, 40) + '...' : i.description
         g.addNode(i.id, {
@@ -113,8 +131,8 @@ export function useGraph() {
     }
 
     // Add edges from interactions (between characters)
-    if (interactions.data) {
-      for (const inter of interactions.data) {
+    if (interList.length > 0) {
+      for (const inter of interList) {
         let charIds: string[] = []
         try {
           charIds = JSON.parse(inter.characters)
@@ -150,8 +168,8 @@ export function useGraph() {
     }
 
     // Add edges from events (event -> characters, event -> location)
-    if (events.data) {
-      for (const ev of events.data) {
+    if (evtList.length > 0) {
+      for (const ev of evtList) {
         // Event -> characters
         if (ev.characters) {
           let charIds: string[] = []
@@ -172,11 +190,12 @@ export function useGraph() {
             }
           }
         }
-        // Event -> location
-        if (ev.location_id && g.hasNode(ev.location_id) && g.hasNode(ev.id)) {
-          const edgeKey = `ev-loc-${ev.id}-${ev.location_id}`
+        // Event -> location (handle both camelCase and snake_case)
+        const locId = (ev as unknown as Record<string, unknown>).locationId as string || ev.location_id
+        if (locId && g.hasNode(locId) && g.hasNode(ev.id)) {
+          const edgeKey = `ev-loc-${ev.id}-${locId}`
           if (!g.hasEdge(edgeKey)) {
-            g.addEdgeWithKey(edgeKey, ev.id, ev.location_id, {
+            g.addEdgeWithKey(edgeKey, ev.id, locId, {
               color: '#6B7280',
               size: 0.5,
             })
