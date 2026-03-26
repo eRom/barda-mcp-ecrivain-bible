@@ -41,6 +41,9 @@ const toolsNav: NavItem[] = [
   { to: '/search', label: 'Recherche', icon: Search },
   { to: '/graph', label: 'Graph', icon: Network },
   { to: '/timeline', label: 'Timeline', icon: CalendarClock },
+]
+
+const adminNav: NavItem[] = [
   { to: '/backups', label: 'Backups', icon: Save },
   { to: '/import-export', label: 'Import/Export', icon: ArrowRightLeft },
 ]
@@ -105,6 +108,11 @@ export default function Sidebar() {
           <div className="mx-3 my-2 border-t border-[var(--sidebar-border)]" />
 
           <NavSection items={toolsNav} collapsed={collapsed} />
+
+          {/* Separateur */}
+          <div className="mx-3 my-2 border-t border-[var(--sidebar-border)]" />
+
+          <NavSection items={adminNav} collapsed={collapsed} />
         </nav>
       </aside>
 
