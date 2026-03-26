@@ -33,7 +33,7 @@ export default function NodeDetail({ node, onClose }: NodeDetailProps) {
     return graph.mapNeighbors(node.id, (neighborId, attrs) => ({
       id: neighborId,
       label: attrs.label as string,
-      type: attrs.type as EntityType,
+      type: attrs.entityType as EntityType,
     }))
   }, [sigma, node.id])
 

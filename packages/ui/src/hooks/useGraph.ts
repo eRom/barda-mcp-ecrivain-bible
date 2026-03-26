@@ -73,7 +73,7 @@ export function useGraph() {
       for (const c of charList) {
         g.addNode(c.id, {
           label: c.name,
-          type: 'character' as EntityType,
+          entityType: 'character' as EntityType,
           color: ENTITY_COLORS.character,
           size: ENTITY_SIZES.character,
           description: c.description,
@@ -88,7 +88,7 @@ export function useGraph() {
       for (const l of locList) {
         g.addNode(l.id, {
           label: l.name,
-          type: 'location' as EntityType,
+          entityType: 'location' as EntityType,
           color: ENTITY_COLORS.location,
           size: ENTITY_SIZES.location,
           description: l.description,
@@ -103,7 +103,7 @@ export function useGraph() {
       for (const e of evtList) {
         g.addNode(e.id, {
           label: e.title,
-          type: 'event' as EntityType,
+          entityType: 'event' as EntityType,
           color: ENTITY_COLORS.event,
           size: ENTITY_SIZES.event,
           description: e.description,
@@ -120,7 +120,7 @@ export function useGraph() {
           i.description.length > 40 ? i.description.slice(0, 40) + '...' : i.description
         g.addNode(i.id, {
           label,
-          type: 'interaction' as EntityType,
+          entityType: 'interaction' as EntityType,
           color: ENTITY_COLORS.interaction,
           size: ENTITY_SIZES.interaction,
           description: i.description,

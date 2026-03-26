@@ -21,7 +21,7 @@ export default function GraphControls() {
 
         const graph = sigma.getGraph()
         graph.forEachNode((nodeId, attrs) => {
-          const nodeType = attrs.type as EntityType
+          const nodeType = attrs.entityType as EntityType
           graph.setNodeAttribute(nodeId, 'hidden', next.has(nodeType))
         })
         graph.forEachEdge((edgeId) => {

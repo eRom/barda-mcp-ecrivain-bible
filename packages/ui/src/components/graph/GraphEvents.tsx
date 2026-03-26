@@ -18,7 +18,7 @@ export default function GraphEvents({ onSelectNode }: GraphEventsProps) {
         onSelectNode({
           id: node,
           label: attrs.label,
-          type: attrs.type as EntityType,
+          type: attrs.entityType as EntityType,
           description: attrs.description,
         })
       },
