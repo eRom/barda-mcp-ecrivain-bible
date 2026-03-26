@@ -2,9 +2,10 @@ import { z } from "zod";
 import { eq } from "drizzle-orm";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { DbInstance } from "../db/index.js";
-import { worldRules, embeddings } from "../db/schema.js";
+import { worldRules } from "../db/schema.js";
+import { indexEntity, removeEntityEmbedding } from "../embeddings/index.js";
 
-export function registerWorldRuleTools(server: McpServer, { db }: DbInstance): void {
+export function registerWorldRuleTools(server: McpServer, { db, sqlite }: DbInstance): void {
   // ── create_world_rule ────────────────────────────────────────────
   server.tool(
     "create_world_rule",
@@ -30,6 +31,10 @@ export function registerWorldRuleTools(server: McpServer, { db }: DbInstance): v
       };
 
       db.insert(worldRules).values(rule).run();
+
+      // Indexer l'embedding
+      const textForEmbedding = [category, title, description, notes].filter(Boolean).join(" ");
+      await indexEntity(sqlite, "world_rule", id, textForEmbedding);
 
       console.error(`[world-rules] Règle créée : ${title} [${category}] (${id})`);
 
@@ -93,6 +98,12 @@ export function registerWorldRuleTools(server: McpServer, { db }: DbInstance): v
 
       const updated = db.select().from(worldRules).where(eq(worldRules.id, id)).get();
 
+      // Re-indexer l'embedding
+      const textForEmbedding = [updated!.category, updated!.title, updated!.description, updated!.notes]
+        .filter(Boolean)
+        .join(" ");
+      await indexEntity(sqlite, "world_rule", id, textForEmbedding);
+
       console.error(`[world-rules] Règle mise à jour : ${updated!.title} (${id})`);
 
       return {
@@ -119,7 +130,7 @@ export function registerWorldRuleTools(server: McpServer, { db }: DbInstance): v
       }
 
       // Supprimer l'embedding associé
-      db.delete(embeddings).where(eq(embeddings.entityId, id)).run();
+      removeEntityEmbedding(sqlite, "world_rule", id);
 
       // Supprimer la règle
       db.delete(worldRules).where(eq(worldRules.id, id)).run();

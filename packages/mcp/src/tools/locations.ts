@@ -4,9 +4,9 @@ import crypto from "node:crypto";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { DbInstance } from "../db/index.js";
 import { locations } from "../db/schema.js";
-import { embeddings } from "../db/schema.js";
+import { indexEntity, removeEntityEmbedding } from "../embeddings/index.js";
 
-export function registerLocationTools(server: McpServer, { db }: DbInstance): void {
+export function registerLocationTools(server: McpServer, { db, sqlite }: DbInstance): void {
   // ── create_location ────────────────────────────────────────────────
   server.tool(
     "create_location",
@@ -41,6 +41,11 @@ export function registerLocationTools(server: McpServer, { db }: DbInstance): vo
       };
 
       db.insert(locations).values(location).run();
+
+      // Indexer l'embedding
+      const textForEmbedding = [name, description, atmosphere, geography, notes].filter(Boolean).join(" ");
+      await indexEntity(sqlite, "location", location.id, textForEmbedding);
+
       console.error(`[locations] Lieu créé: ${name} (${location.id})`);
 
       return {
@@ -124,6 +129,13 @@ export function registerLocationTools(server: McpServer, { db }: DbInstance): vo
       db.update(locations).set(updates).where(eq(locations.id, id)).run();
 
       const updated = db.select().from(locations).where(eq(locations.id, id)).get();
+
+      // Re-indexer l'embedding
+      const textForEmbedding = [updated!.name, updated!.description, updated!.atmosphere, updated!.geography, updated!.notes]
+        .filter(Boolean)
+        .join(" ");
+      await indexEntity(sqlite, "location", id, textForEmbedding);
+
       console.error(`[locations] Lieu mis à jour: ${updated!.name} (${id})`);
 
       return {
@@ -149,9 +161,7 @@ export function registerLocationTools(server: McpServer, { db }: DbInstance): vo
       }
 
       // Supprimer l'embedding associé
-      db.delete(embeddings)
-        .where(eq(embeddings.entityId, id))
-        .run();
+      removeEntityEmbedding(sqlite, "location", id);
 
       // Supprimer le lieu
       db.delete(locations).where(eq(locations.id, id)).run();

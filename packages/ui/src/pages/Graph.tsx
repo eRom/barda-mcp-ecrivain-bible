@@ -34,7 +34,7 @@ export default function Graph() {
       <div className="relative flex-1">
         <GraphView graph={graph} onSelectNode={setSelectedNode} selectedNodeId={selectedNode?.id} />
       </div>
-      {selectedNode && <NodeDetail node={selectedNode} graph={graph} onClose={() => setSelectedNode(null)} />}
+      {selectedNode && <NodeDetail node={selectedNode} graph={graph} onClose={() => setSelectedNode(null)} onSelectNode={setSelectedNode} />}
     </div>
   )
 }

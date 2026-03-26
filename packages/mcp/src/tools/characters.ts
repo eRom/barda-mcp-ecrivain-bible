@@ -3,9 +3,9 @@ import { eq } from "drizzle-orm";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { DbInstance } from "../db/index.js";
 import { characters } from "../db/schema.js";
-import { embeddings } from "../db/schema.js";
+import { indexEntity, removeEntityEmbedding } from "../embeddings/index.js";
 
-export function registerCharacterTools(server: McpServer, { db }: DbInstance): void {
+export function registerCharacterTools(server: McpServer, { db, sqlite }: DbInstance): void {
   // ── create_character ─────────────────────────────────────────────
   server.tool(
     "create_character",
@@ -47,6 +47,10 @@ export function registerCharacterTools(server: McpServer, { db }: DbInstance): v
       };
 
       db.insert(characters).values(character).run();
+
+      // Indexer l'embedding
+      const textForEmbedding = [name, description, traits, background, notes].filter(Boolean).join(" ");
+      await indexEntity(sqlite, "character", id, textForEmbedding);
 
       console.error(`[characters] Personnage créé : ${name} (${id})`);
 
@@ -133,6 +137,12 @@ export function registerCharacterTools(server: McpServer, { db }: DbInstance): v
 
       const updated = db.select().from(characters).where(eq(characters.id, id)).get();
 
+      // Re-indexer l'embedding
+      const textForEmbedding = [updated!.name, updated!.description, updated!.traits, updated!.background, updated!.notes]
+        .filter(Boolean)
+        .join(" ");
+      await indexEntity(sqlite, "character", id, textForEmbedding);
+
       console.error(`[characters] Personnage mis à jour : ${updated!.name} (${id})`);
 
       return {
@@ -159,9 +169,7 @@ export function registerCharacterTools(server: McpServer, { db }: DbInstance): v
       }
 
       // Supprimer l'embedding associé
-      db.delete(embeddings)
-        .where(eq(embeddings.entityId, id))
-        .run();
+      removeEntityEmbedding(sqlite, "character", id);
 
       // Supprimer le personnage
       db.delete(characters).where(eq(characters.id, id)).run();

@@ -7,6 +7,7 @@ interface NodeDetailProps {
   node: GraphNode
   graph: Graph
   onClose: () => void
+  onSelectNode: (node: GraphNode) => void
 }
 
 function entityRoute(type: EntityType): string {
@@ -24,7 +25,7 @@ function entityRoute(type: EntityType): string {
   }
 }
 
-export default function NodeDetail({ node, graph, onClose }: NodeDetailProps) {
+export default function NodeDetail({ node, graph, onClose, onSelectNode }: NodeDetailProps) {
   const navigate = useNavigate()
 
   const neighbors = useMemo(() => {
@@ -92,9 +93,15 @@ export default function NodeDetail({ node, graph, onClose }: NodeDetailProps) {
                 <li
                   key={n.id}
                   className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 transition-colors hover:bg-[var(--accent)]"
-                  onClick={() =>
-                    navigate(`${entityRoute(n.type)}/${n.id}`)
-                  }
+                  onClick={() => {
+                    const attrs = graph.getNodeAttributes(n.id)
+                    onSelectNode({
+                      id: n.id,
+                      label: n.label,
+                      type: n.type,
+                      description: (attrs.description as string) ?? null,
+                    })
+                  }}
                 >
                   <span
                     className="inline-block h-2 w-2 flex-shrink-0 rounded-full"

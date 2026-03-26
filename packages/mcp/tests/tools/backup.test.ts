@@ -10,6 +10,14 @@ vi.mock("@huggingface/transformers", () => ({
   pipeline: vi.fn(),
 }));
 
+vi.mock("../../src/embeddings/index.js", () => ({
+  indexEntity: vi.fn().mockResolvedValue(undefined),
+  removeEntityEmbedding: vi.fn(),
+  loadAllEmbeddings: vi.fn().mockReturnValue([]),
+  generateEmbedding: vi.fn(),
+  generateQueryEmbedding: vi.fn(),
+}));
+
 describe("Backup / Restore", () => {
   let tmpDir: string;
   let dbPath: string;

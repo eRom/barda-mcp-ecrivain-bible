@@ -3,7 +3,8 @@ import { eq, sql } from "drizzle-orm";
 import crypto from "node:crypto";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { DbInstance } from "../db/index.js";
-import { interactions, characters, embeddings } from "../db/schema.js";
+import { interactions, characters } from "../db/schema.js";
+import { indexEntity, removeEntityEmbedding } from "../embeddings/index.js";
 
 /** Résout les noms des personnages à partir de leurs UUIDs */
 function resolveCharacterNames(
@@ -29,7 +30,7 @@ function enrichInteraction(
   return { ...interaction, characterDetails: resolved };
 }
 
-export function registerInteractionTools(server: McpServer, { db }: DbInstance): void {
+export function registerInteractionTools(server: McpServer, { db, sqlite }: DbInstance): void {
   // ── create_interaction ─────────────────────────────────────────────
   server.tool(
     "create_interaction",
@@ -86,6 +87,11 @@ export function registerInteractionTools(server: McpServer, { db }: DbInstance):
       };
 
       db.insert(interactions).values(interaction).run();
+
+      // Indexer l'embedding
+      const textForEmbedding = [description, nature, chapter, notes].filter(Boolean).join(" ");
+      await indexEntity(sqlite, "interaction", interaction.id, textForEmbedding);
+
       console.error(`[interactions] Interaction créée: ${interaction.id}`);
 
       const created = db.select().from(interactions).where(eq(interactions.id, interaction.id)).get()!;
@@ -163,6 +169,13 @@ export function registerInteractionTools(server: McpServer, { db }: DbInstance):
       db.update(interactions).set(updates).where(eq(interactions.id, id)).run();
 
       const updated = db.select().from(interactions).where(eq(interactions.id, id)).get()!;
+
+      // Re-indexer l'embedding
+      const textForEmbedding = [updated.description, updated.nature, updated.chapter, updated.notes]
+        .filter(Boolean)
+        .join(" ");
+      await indexEntity(sqlite, "interaction", id, textForEmbedding);
+
       console.error(`[interactions] Interaction mise à jour: ${id}`);
 
       return {
@@ -188,9 +201,7 @@ export function registerInteractionTools(server: McpServer, { db }: DbInstance):
       }
 
       // Supprimer l'embedding associé
-      db.delete(embeddings)
-        .where(eq(embeddings.entityId, id))
-        .run();
+      removeEntityEmbedding(sqlite, "interaction", id);
 
       // Supprimer l'interaction
       db.delete(interactions).where(eq(interactions.id, id)).run();

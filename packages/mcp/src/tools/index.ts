@@ -15,6 +15,7 @@ import { registerExportTools } from "./export.js";
 import { registerImportTools } from "./import.js";
 import { registerDuplicateTools } from "./duplicates.js";
 import { registerTemplateTools } from "./templates.js";
+import { registerReindexTools } from "./reindex.js";
 
 export function registerAllTools(server: McpServer, db: DbInstance, dbPath: string): void {
   // Ping tool pour vérifier que le serveur fonctionne
@@ -43,6 +44,9 @@ export function registerAllTools(server: McpServer, db: DbInstance, dbPath: stri
 
   // Templates
   registerTemplateTools(server);
+
+  // Reindex embeddings
+  registerReindexTools(server, db);
 
   // Utility tools
   registerBackupTools(server, db, dbPath);

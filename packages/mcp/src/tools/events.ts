@@ -2,7 +2,8 @@ import { z } from "zod";
 import { eq, sql } from "drizzle-orm";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import type { DbInstance } from "../db/index.js";
-import { events, characters, locations, embeddings } from "../db/schema.js";
+import { events, characters, locations } from "../db/schema.js";
+import { indexEntity, removeEntityEmbedding } from "../embeddings/index.js";
 
 /** Enrichit un événement avec les noms des personnages et du lieu. */
 function enrichEvent(
@@ -30,7 +31,7 @@ function enrichEvent(
   return result;
 }
 
-export function registerEventTools(server: McpServer, { db }: DbInstance): void {
+export function registerEventTools(server: McpServer, { db, sqlite }: DbInstance): void {
   // ── create_event ─────────────────────────────────────────────────
   server.tool(
     "create_event",
@@ -96,6 +97,10 @@ export function registerEventTools(server: McpServer, { db }: DbInstance): void 
       };
 
       db.insert(events).values(event).run();
+
+      // Indexer l'embedding
+      const textForEmbedding = [title, description, chapter, notes].filter(Boolean).join(" ");
+      await indexEntity(sqlite, "event", id, textForEmbedding);
 
       console.error(`[events] Événement créé : ${title} (${id})`);
 
@@ -196,6 +201,12 @@ export function registerEventTools(server: McpServer, { db }: DbInstance): void 
       const updated = db.select().from(events).where(eq(events.id, id)).get();
       const enriched = enrichEvent(db, updated!);
 
+      // Re-indexer l'embedding
+      const textForEmbedding = [updated!.title, updated!.description, updated!.chapter, updated!.notes]
+        .filter(Boolean)
+        .join(" ");
+      await indexEntity(sqlite, "event", id, textForEmbedding);
+
       console.error(`[events] Événement mis à jour : ${updated!.title} (${id})`);
 
       return {
@@ -222,7 +233,7 @@ export function registerEventTools(server: McpServer, { db }: DbInstance): void 
       }
 
       // Supprimer l'embedding associé
-      db.delete(embeddings).where(eq(embeddings.entityId, id)).run();
+      removeEntityEmbedding(sqlite, "event", id);
 
       // Supprimer l'événement
       db.delete(events).where(eq(events.id, id)).run();
