@@ -173,3 +173,18 @@ packages/
 ## Regles de suppression
 - Ne JAMAIS utiliser `rm`, `rmdir`, ou `unlink` pour supprimer des fichiers/dossiers
 - Toujours utiliser la commande `trash` pour envoyer dans la corbeille macOS
+
+## Contexte projet (.memory)
+
+Au demarrage de chaque session, lis ces fichiers pour charger le contexte du projet :
+- .memory/architecture.md
+- .memory/key-files.md
+- .memory/patterns.md
+- .memory/gotchas.md
+
+Apres lecture, affiche un resume compact :
+- Projet : [nom/type]
+- Stack : [technos principales]
+- Fichiers cles : [nombre]
+- Gotchas : [nombre]
+- Pret a travailler.
