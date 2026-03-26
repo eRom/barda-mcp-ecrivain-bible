@@ -183,7 +183,7 @@ export function startHttpServer(
   if (uiDir && fs.existsSync(uiDir) && fs.readdirSync(uiDir).length > 0) {
     app.use(express.static(uiDir));
     // SPA fallback — serve index.html for any non-API route
-    app.get("*", (_req, res) => {
+    app.get("/{*path}", (_req, res) => {
       res.sendFile(path.join(uiDir, "index.html"));
     });
     console.error(`[http] UI statique servie depuis ${uiDir}`);
