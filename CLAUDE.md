@@ -1,42 +1,68 @@
 # Bible d'Écrivain MCP — Guide de développement
 
 ## Projet
-Serveur MCP standalone (stdio) en TypeScript pour gérer une bible d'écrivain — base de connaissances structurée et cherchable (fulltext + sémantique) d'un univers narratif.
+Serveur MCP standalone en TypeScript pour gerer une bible d'ecrivain — base de connaissances structuree et cherchable (fulltext + semantique) d'un univers narratif. Deux interfaces : MCP stdio pour les agents IA, et UI web pour l'humain.
 
 ## Stack
 - **Runtime** : Node.js >= 20, TypeScript 5.x (strict)
-- **MCP** : @modelcontextprotocol/sdk (stdio transport)
+- **MCP** : @modelcontextprotocol/sdk (stdio + HTTP transport)
 - **DB** : better-sqlite3, drizzle-orm, FTS5
-- **Embeddings** : @huggingface/transformers (ONNX, modèle Xenova/multilingual-e5-base)
+- **Embeddings** : @huggingface/transformers (ONNX, modele Xenova/multilingual-e5-base)
+- **UI** : React 19, Vite, Tailwind CSS 4, TanStack Query, React Router, @react-sigma/core (Sigma.js + graphology)
 - **Tests** : vitest
-- **Build** : tsup (ESM)
-- **Package manager** : pnpm
+- **Build** : tsup (MCP), Vite (UI)
+- **Package manager** : pnpm (workspaces)
 
 ## Commandes
 ```bash
-pnpm dev          # Lancer en mode dev (tsx)
+# Depuis la racine (monorepo)
+pnpm build                    # Build mcp + ui
+pnpm test                     # Tests mcp + ui
+pnpm --filter mcp dev         # MCP mode stdio (dev)
+pnpm --filter mcp dev -- --ui # MCP mode HTTP + UI (dev)
+pnpm --filter ui dev          # UI Vite dev server (avec proxy vers MCP)
+
+# Depuis packages/mcp/
 pnpm build        # Build production (tsup)
-pnpm test         # Tests (vitest)
-pnpm db:generate  # Générer migrations (drizzle-kit)
-pnpm db:migrate   # Appliquer migrations
-pnpm lint         # ESLint
-pnpm format       # Prettier
+pnpm test         # Tests MCP (vitest)
+pnpm db:generate  # Generer migrations (drizzle-kit)
+
+# Depuis packages/ui/
+pnpm dev          # Vite dev server
+pnpm build        # Build production (copie dans packages/mcp/public/)
+pnpm test         # Tests UI (vitest + testing-library)
 ```
 
-## Structure
+## Structure (monorepo)
 ```
-src/
-  index.ts          # Entry point MCP server
-  server.ts         # Server setup + tool registration
-  db/
-    index.ts        # Connection + init
-    schema.ts       # Drizzle schema
-    migrations/     # SQL migrations générées
-  tools/            # Un fichier par domaine (characters, locations, events...)
-  embeddings/
-    index.ts        # Pipeline embedding (génération + stockage + recherche)
-  utils/
-data/               # Répertoire par défaut pour bible.db
+packages/
+  mcp/                        # Serveur MCP
+    src/
+      index.ts                # Entry point (stdio + HTTP modes)
+      server.ts               # McpServer setup + tool registration
+      http.ts                 # Serveur HTTP : routes MCP + static UI
+      db/                     # Schema, connexion, FTS, migrations
+      tools/                  # Un fichier par domaine (47 tools)
+      embeddings/             # Pipeline embedding
+    tests/
+    public/                   # Build UI copie ici pour prod
+    data/                     # bible.db par defaut
+    backups/
+  ui/                         # Interface web React
+    src/
+      main.tsx                # Entry point React
+      App.tsx                 # Router principal
+      api/mcp-client.ts       # Wrapper fetch JSON-RPC
+      hooks/                  # useMcp, useGraph, useToast...
+      components/
+        layout/               # Sidebar, Header
+        entities/              # EntityList, EntityForm, EntityCard
+        graph/                 # GraphView (@react-sigma/core (Sigma.js + graphology))
+        timeline/              # TimelineView
+        search/                # SearchBar, SearchResults
+        common/                # Boutons, modals, toasts
+      pages/                  # Dashboard, Characters, Graph, Search...
+      types/                  # Character, Location, Event...
 ```
 
 ## Patterns MCP (@modelcontextprotocol/sdk)
@@ -108,13 +134,46 @@ data/               # Répertoire par défaut pour bible.db
 - Préfixer les requêtes avec "query: " et les documents avec "passage: " pour les modèles E5
 - Ne PAS utiliser `intfloat/multilingual-e5-large` directement (problèmes de compatibilité Transformers.js) — utiliser les versions Xenova
 
+## Patterns UI (React + Vite + Tailwind)
+
+### MCP Client cote navigateur
+- Wrapper fetch maison dans `api/mcp-client.ts` — PAS le SDK MCP complet
+- Format : POST /mcp avec body JSON-RPC `{jsonrpc:"2.0", id:N, method:"tools/call", params:{name, arguments}}`
+- Parser `result.content[0].text` (JSON.parse) pour extraire les donnees
+
+### Data fetching (TanStack Query)
+- `useMcpQuery(toolName, params)` pour les lectures (cache automatique)
+- `useMcpMutation(toolName, invalidateKeys)` pour les ecritures (invalidation du cache)
+- Pas de store global (Redux/Zustand) — React Query est le state manager
+
+### Graph (@react-sigma/core + graphology)
+- Sigma.js = WebGL, 60+ FPS meme avec 500+ noeuds
+- graphology pour le modele de donnees du graph (type-safe)
+- Layout : Force-Atlas 2 (via graphology-layout-forceatlas2) — meilleur clustering que d3-force
+- Noeuds colores par type : character=#3B82F6, location=#10B981, event=#F59E0B, interaction=#8B5CF6, world_rule=#EC4899
+- Edges : interactions -> lien entre personnages, events -> lien event-personnage/lieu
+- Le hook `useGraph` construit un graphology Graph a partir des appels MCP
+
+### Composants
+- `EntityList` : generique pour tous les types d'entites (liste + pagination + bouton creer)
+- `EntityForm` : generique pour edition/creation (mode lecture par defaut, toggle edition)
+- `EntityLink` : nom d'entite cliquable qui navigue vers sa fiche (wiki-style)
+- `SearchBar` : debounce 300ms, toujours visible dans le header
+
+### Pieges a eviter
+- Ne JAMAIS utiliser `dangerouslySetInnerHTML` (les fiches contiennent du texte libre)
+- Le proxy Vite `/mcp -> http://localhost:3000/mcp` est pour le dev uniquement. En prod, meme serveur.
+- Sigma.js renderer doit etre kill() au unmount (fuite memoire WebGL sinon)
+- React Query : utiliser `staleTime` pour eviter des re-fetches excessifs
+
 ## Conventions de code
 - ESM uniquement (`"type": "module"` dans package.json)
-- Imports avec extensions `.js` (résolution TypeScript ESM)
-- Pas de classes sauf pour le Server MCP — préférer fonctions et modules
-- Erreurs typées avec des codes : `{ code: "CHARACTER_NOT_FOUND", message: "..." }`
+- Imports avec extensions `.js` (resolution TypeScript ESM) — cote MCP uniquement
+- Cote UI : imports sans extension (Vite gere la resolution)
+- Pas de classes sauf pour le Server MCP — preferer fonctions et modules
+- Erreurs typees avec des codes : `{ code: "CHARACTER_NOT_FOUND", message: "..." }`
 - Tous les IDs sont des UUID v4 (text en SQLite)
 
-## Règles de suppression
+## Regles de suppression
 - Ne JAMAIS utiliser `rm`, `rmdir`, ou `unlink` pour supprimer des fichiers/dossiers
 - Toujours utiliser la commande `trash` pour envoyer dans la corbeille macOS

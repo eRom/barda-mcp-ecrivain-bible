@@ -6,12 +6,15 @@ dist/
 *.tsbuildinfo
 
 # Database
-data/*.db
-data/*.db-wal
-data/*.db-shm
+**/data/*.db
+**/data/*.db-wal
+**/data/*.db-shm
 
 # Backups
-backups/*.db
+**/backups/*.db
+
+# UI build output (copied to mcp for production)
+packages/mcp/public/
 
 # Cache
 .cache/
