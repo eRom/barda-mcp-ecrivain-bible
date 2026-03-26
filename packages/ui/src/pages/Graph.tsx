@@ -1,7 +1,5 @@
 import { useGraph } from '../hooks/useGraph'
 import GraphView from '../components/graph/GraphView'
-import GraphControls from '../components/graph/GraphControls'
-import GraphLegend from '../components/graph/GraphLegend'
 import NodeDetail from '../components/graph/NodeDetail'
 
 export default function Graph() {
@@ -35,8 +33,6 @@ export default function Graph() {
     <div className="relative flex" style={{ height: 'calc(100vh - 38px)' }}>
       <div className="relative flex-1">
         <GraphView graph={graph} onSelectNode={setSelectedNode} />
-        <GraphControls />
-        <GraphLegend />
       </div>
       {selectedNode && <NodeDetail node={selectedNode} onClose={() => setSelectedNode(null)} />}
     </div>

@@ -4,6 +4,8 @@ import '@react-sigma/core/lib/style.css'
 import Graph from 'graphology'
 import GraphEvents from './GraphEvents'
 import GraphLayout from './GraphLayout'
+import GraphControls from './GraphControls'
+import GraphLegend from './GraphLegend'
 import type { GraphNode } from '../../hooks/useGraph'
 
 interface GraphLoaderProps {
@@ -55,6 +57,8 @@ export default function GraphView({ graph, onSelectNode }: GraphViewProps) {
       <GraphLoader graph={graph} />
       <GraphEvents onSelectNode={onSelectNode} />
       <GraphLayout />
+      <GraphControls />
+      <GraphLegend />
     </SigmaContainer>
   )
 }
