@@ -1,10 +1,11 @@
 import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useSigma } from '@react-sigma/core'
+import type Graph from 'graphology'
 import { ENTITY_COLORS, ENTITY_LABELS, type GraphNode, type EntityType } from '../../hooks/useGraph'
 
 interface NodeDetailProps {
   node: GraphNode
+  graph: Graph
   onClose: () => void
 }
 
@@ -23,19 +24,17 @@ function entityRoute(type: EntityType): string {
   }
 }
 
-export default function NodeDetail({ node, onClose }: NodeDetailProps) {
+export default function NodeDetail({ node, graph, onClose }: NodeDetailProps) {
   const navigate = useNavigate()
-  const sigma = useSigma()
 
   const neighbors = useMemo(() => {
-    const graph = sigma.getGraph()
     if (!graph.hasNode(node.id)) return []
     return graph.mapNeighbors(node.id, (neighborId, attrs) => ({
       id: neighborId,
       label: attrs.label as string,
       type: attrs.entityType as EntityType,
     }))
-  }, [sigma, node.id])
+  }, [graph, node.id])
 
   const description = node.description
     ? node.description.length > 200
