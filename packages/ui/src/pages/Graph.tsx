@@ -32,7 +32,7 @@ export default function Graph() {
   }
 
   return (
-    <div className="relative flex h-full">
+    <div className="relative flex" style={{ height: 'calc(100vh - 38px)' }}>
       <div className="relative flex-1">
         <GraphView graph={graph} onSelectNode={setSelectedNode} />
         <GraphControls />
