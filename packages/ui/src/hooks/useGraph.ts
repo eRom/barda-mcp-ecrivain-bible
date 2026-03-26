@@ -52,10 +52,10 @@ function extractArray<T>(data: unknown): T[] {
 export function useGraph() {
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null)
 
-  const characters = useMcpQuery<unknown>('list_characters', { limit: 500 })
-  const locations = useMcpQuery<unknown>('list_locations', { limit: 500 })
-  const events = useMcpQuery<unknown>('list_events', { limit: 500 })
-  const interactions = useMcpQuery<unknown>('list_interactions', { limit: 500 })
+  const characters = useMcpQuery<unknown>('list_characters', { limit: 200 })
+  const locations = useMcpQuery<unknown>('list_locations', { limit: 200 })
+  const events = useMcpQuery<unknown>('list_events', { limit: 200 })
+  const interactions = useMcpQuery<unknown>('list_interactions', { limit: 200 })
 
   const isLoading =
     characters.isLoading || locations.isLoading || events.isLoading || interactions.isLoading
