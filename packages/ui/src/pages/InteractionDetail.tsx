@@ -40,7 +40,7 @@ export default function InteractionDetail() {
   const deleteMutation = useMcpMutation('delete_interaction', ['list_interactions'])
 
   if (!isNew && isLoading) {
-    return <div className="p-8 text-gray-500">Chargement...</div>
+    return <div className="p-8 text-[var(--muted-foreground)]">Chargement...</div>
   }
 
   const characters = charsData?.characters ?? []
@@ -85,7 +85,7 @@ export default function InteractionDetail() {
 
   return (
     <div className="p-6 lg:p-8 max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">
+      <h2 className="text-2xl font-bold text-[var(--foreground)] mb-6">
         {isNew ? 'Nouvelle interaction' : 'Interaction'}
       </h2>
 
@@ -101,8 +101,8 @@ export default function InteractionDetail() {
 
       {/* Wiki-style links for associated characters (read mode) */}
       {!isNew && data && selectedChars.length > 0 && (
-        <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-          <span className="text-sm font-medium text-gray-500">Personnages : </span>
+        <div className="mt-6 p-4 bg-[var(--card)] border border-[var(--border)] rounded-lg">
+          <span className="text-sm font-medium text-[var(--muted-foreground)]">Personnages : </span>
           <span className="inline-flex flex-wrap gap-x-2 gap-y-1">
             {selectedChars.map((charId) => {
               const char = characters.find((c) => c.id === charId)
@@ -116,9 +116,9 @@ export default function InteractionDetail() {
 
       {/* Characters selector */}
       <div className="mt-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Personnages <span className="text-red-500">*</span>
-          <span className="text-xs text-gray-400 ml-2">(min. 2)</span>
+        <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
+          Personnages <span className="text-[var(--destructive)]">*</span>
+          <span className="text-xs text-[var(--muted-foreground)] ml-2">(min. 2)</span>
         </label>
         <div className="flex flex-wrap gap-2">
           {characters.map((char) => (
@@ -126,10 +126,10 @@ export default function InteractionDetail() {
               key={char.id}
               type="button"
               onClick={() => toggleChar(char.id)}
-              className={`px-3 py-1 text-sm rounded-full border transition-colors ${
+              className={`px-3 py-1 text-sm rounded-full border transition-all duration-200 ${
                 selectedChars.includes(char.id)
-                  ? 'bg-violet-500 text-white border-violet-500'
-                  : 'bg-white text-gray-600 border-gray-300 hover:border-violet-300'
+                  ? 'bg-purple-500/10 text-purple-400 border-purple-500/30'
+                  : 'bg-transparent text-[var(--muted-foreground)] border-[var(--border)] hover:border-purple-500/30'
               }`}
             >
               {char.name}

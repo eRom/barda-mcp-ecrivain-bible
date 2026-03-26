@@ -26,14 +26,14 @@ const TYPE_LABELS: Record<string, string> = {
   note: 'Note',
 }
 
-const TYPE_COLORS: Record<string, string> = {
-  character: 'bg-blue-100 text-blue-800',
-  location: 'bg-emerald-100 text-emerald-800',
-  event: 'bg-amber-100 text-amber-800',
-  interaction: 'bg-violet-100 text-violet-800',
-  world_rule: 'bg-pink-100 text-pink-800',
-  research: 'bg-cyan-100 text-cyan-800',
-  note: 'bg-gray-100 text-gray-800',
+const TYPE_BADGE_STYLES: Record<string, string> = {
+  character: 'bg-blue-500/10 text-blue-400',
+  location: 'bg-emerald-500/10 text-emerald-400',
+  event: 'bg-amber-500/10 text-amber-400',
+  interaction: 'bg-purple-500/10 text-purple-400',
+  world_rule: 'bg-pink-500/10 text-pink-400',
+  research: 'bg-cyan-500/10 text-cyan-400',
+  note: 'bg-gray-500/10 text-gray-400',
 }
 
 const TYPE_ROUTES: Record<string, string> = {
@@ -90,16 +90,16 @@ export default function SearchResults({ results, isLoading, query, showScore }: 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="h-6 w-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
-        <span className="ml-3 text-sm text-gray-500">Recherche en cours...</span>
+        <div className="h-6 w-6 border-2 border-[var(--ring)] border-t-transparent rounded-full animate-spin" />
+        <span className="ml-3 text-sm text-[var(--muted-foreground)]">Recherche en cours...</span>
       </div>
     )
   }
 
   if (results.length === 0) {
     return (
-      <div className="text-center py-12 text-gray-500">
-        <svg className="mx-auto h-12 w-12 text-gray-300 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="text-center py-12 text-[var(--muted-foreground)]">
+        <svg className="mx-auto h-12 w-12 mb-3 opacity-40" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
         <p>Aucun resultat pour &laquo;&nbsp;{query}&nbsp;&raquo;</p>
@@ -113,7 +113,7 @@ export default function SearchResults({ results, isLoading, query, showScore }: 
     <div className="space-y-6">
       {Object.entries(grouped).map(([type, items]) => (
         <section key={type}>
-          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-2">
+          <h3 className="text-sm font-semibold text-[var(--muted-foreground)] uppercase tracking-wide mb-2">
             {TYPE_LABELS[type] ?? type} ({items.length})
           </h3>
           <div className="space-y-2">
@@ -121,26 +121,26 @@ export default function SearchResults({ results, isLoading, query, showScore }: 
               <button
                 key={item.entity_id}
                 onClick={() => navigate(`${TYPE_ROUTES[item.entity_type] ?? ''}/${item.entity_id}`)}
-                className="w-full text-left p-3 bg-white border border-gray-200 rounded-lg hover:border-blue-300 hover:shadow-sm transition-all"
+                className="w-full text-left p-3 bg-[var(--card)] border border-[var(--border)] rounded-lg hover:shadow-md hover:border-[var(--border)] transition-all duration-200"
               >
                 <div className="flex items-center gap-2 mb-1">
-                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${TYPE_COLORS[item.entity_type] ?? 'bg-gray-100 text-gray-800'}`}>
+                  <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${TYPE_BADGE_STYLES[item.entity_type] ?? 'bg-gray-500/10 text-gray-400'}`}>
                     {TYPE_LABELS[item.entity_type] ?? item.entity_type}
                   </span>
-                  <span className="text-sm font-medium text-gray-900">
+                  <span className="text-sm font-medium text-[var(--foreground)]">
                     {getEntityName(item)}
                   </span>
                   {showScore && item.score != null && (
-                    <span className="text-[10px] font-mono px-1.5 py-0.5 bg-blue-50 text-blue-600 rounded-full">
+                    <span className="text-[10px] font-mono px-1.5 py-0.5 bg-blue-500/10 text-blue-400 rounded-full">
                       {Math.round(item.score * 100)}%
                     </span>
                   )}
                 </div>
                 {item.snippet ? (
-                  <p className="text-sm text-gray-600 line-clamp-2">
+                  <p className="text-sm text-[var(--muted-foreground)] line-clamp-2">
                     {parseSnippet(item.snippet).map((part, i) =>
                       part.bold ? (
-                        <strong key={i} className="text-gray-900 bg-yellow-100 px-0.5 rounded">
+                        <strong key={i} className="text-[var(--foreground)] bg-amber-500/10 px-0.5 rounded">
                           {part.text}
                         </strong>
                       ) : (
@@ -149,7 +149,7 @@ export default function SearchResults({ results, isLoading, query, showScore }: 
                     )}
                   </p>
                 ) : item.entity ? (
-                  <p className="text-sm text-gray-600 line-clamp-2">
+                  <p className="text-sm text-[var(--muted-foreground)] line-clamp-2">
                     {(item.entity.description as string) ?? (item.entity.content as string) ?? ''}
                   </p>
                 ) : null}

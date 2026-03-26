@@ -9,10 +9,10 @@ export default function Graph() {
 
   if (isLoading) {
     return (
-      <div className="flex h-full items-center justify-center bg-slate-900">
+      <div className="flex h-full items-center justify-center bg-[var(--background)]">
         <div className="text-center">
-          <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-2 border-slate-600 border-t-blue-500" />
-          <p className="text-sm text-slate-400">Chargement du graph...</p>
+          <div className="mx-auto mb-3 h-8 w-8 animate-spin rounded-full border-2 border-[var(--muted)] border-t-[var(--sidebar-primary)]" />
+          <p className="text-sm text-[var(--muted-foreground)]">Chargement du graph...</p>
         </div>
       </div>
     )
@@ -20,10 +20,10 @@ export default function Graph() {
 
   if (graph.order === 0) {
     return (
-      <div className="flex h-full items-center justify-center bg-slate-900">
+      <div className="flex h-full items-center justify-center bg-[var(--background)]">
         <div className="text-center">
-          <p className="mb-2 text-lg text-slate-300">Aucune entite dans la bible</p>
-          <p className="text-sm text-slate-500">
+          <p className="mb-2 text-lg text-[var(--foreground)]">Aucune entite dans la bible</p>
+          <p className="text-sm text-[var(--muted-foreground)]">
             Creez des personnages, lieux et evenements pour voir le graph
           </p>
         </div>

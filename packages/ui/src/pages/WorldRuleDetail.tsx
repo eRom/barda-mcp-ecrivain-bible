@@ -32,7 +32,7 @@ export default function WorldRuleDetail() {
   const deleteMutation = useMcpMutation('delete_world_rule', ['list_world_rules'])
 
   if (!isNew && isLoading) {
-    return <div className="p-8 text-gray-500">Chargement...</div>
+    return <div className="p-8 text-[var(--muted-foreground)]">Chargement...</div>
   }
 
   function handleSave(formData: Record<string, string>) {
@@ -68,14 +68,14 @@ export default function WorldRuleDetail() {
   return (
     <div className="p-6 lg:p-8 max-w-3xl mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+        <h2 className="text-2xl font-bold text-[var(--foreground)]">
           {isNew ? 'Nouvelle regle' : data?.title ?? 'Regle'}
         </h2>
         {isNew && (
           <button
             type="button"
             onClick={() => setTemplateOpen(true)}
-            className="px-3 py-1.5 text-sm border border-violet-300 dark:border-violet-600 text-violet-600 dark:text-violet-400 rounded-lg hover:bg-violet-50 dark:hover:bg-violet-900/30"
+            className="px-3 py-1.5 text-sm bg-[var(--secondary)] text-[var(--secondary-foreground)] rounded-md shadow-xs hover:opacity-80 transition-opacity"
           >
             Utiliser un template
           </button>

@@ -44,9 +44,9 @@ export default function NodeDetail({ node, onClose }: NodeDetailProps) {
     : null
 
   return (
-    <div className="flex h-full w-80 flex-col border-l border-slate-700 bg-slate-800">
+    <div className="flex h-full w-80 flex-col border-l border-[var(--border)] bg-[var(--card)]">
       {/* Header */}
-      <div className="flex items-start justify-between border-b border-slate-700 p-4">
+      <div className="flex items-start justify-between border-b border-[var(--border)] p-4">
         <div className="min-w-0 flex-1">
           <span
             className="mb-1 inline-block rounded-full px-2 py-0.5 text-xs font-medium text-white"
@@ -54,11 +54,11 @@ export default function NodeDetail({ node, onClose }: NodeDetailProps) {
           >
             {ENTITY_LABELS[node.type]}
           </span>
-          <h3 className="truncate text-lg font-semibold text-slate-100">{node.label}</h3>
+          <h3 className="truncate text-lg font-semibold text-[var(--foreground)]">{node.label}</h3>
         </div>
         <button
           onClick={onClose}
-          className="ml-2 rounded p-1 text-slate-400 transition-colors hover:bg-slate-700 hover:text-slate-200"
+          className="ml-2 rounded p-1 text-[var(--muted-foreground)] transition-colors hover:bg-[var(--accent)] hover:text-[var(--foreground)]"
         >
           <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
@@ -73,11 +73,11 @@ export default function NodeDetail({ node, onClose }: NodeDetailProps) {
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-4">
-        {description && <p className="mb-4 text-sm leading-relaxed text-slate-300">{description}</p>}
+        {description && <p className="mb-4 text-sm leading-relaxed text-[var(--muted-foreground)]">{description}</p>}
 
         <button
           onClick={() => navigate(`${entityRoute(node.type)}/${node.id}`)}
-          className="mb-6 w-full rounded-lg bg-slate-700 px-4 py-2 text-sm font-medium text-slate-200 transition-colors hover:bg-slate-600"
+          className="mb-6 w-full rounded-md bg-[var(--secondary)] px-4 py-2 text-sm font-medium text-[var(--secondary-foreground)] shadow-xs transition-opacity hover:opacity-80"
         >
           Voir la fiche complete
         </button>
@@ -85,14 +85,14 @@ export default function NodeDetail({ node, onClose }: NodeDetailProps) {
         {/* Connexions */}
         {neighbors.length > 0 && (
           <div>
-            <h4 className="mb-2 text-xs font-semibold tracking-wide text-slate-400 uppercase">
+            <h4 className="mb-2 text-xs font-semibold tracking-wide text-[var(--muted-foreground)] uppercase">
               Connexions ({neighbors.length})
             </h4>
             <ul className="space-y-1">
               {neighbors.map((n) => (
                 <li
                   key={n.id}
-                  className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 transition-colors hover:bg-slate-700"
+                  className="flex cursor-pointer items-center gap-2 rounded px-2 py-1.5 transition-colors hover:bg-[var(--accent)]"
                   onClick={() =>
                     navigate(`${entityRoute(n.type)}/${n.id}`)
                   }
@@ -101,8 +101,8 @@ export default function NodeDetail({ node, onClose }: NodeDetailProps) {
                     className="inline-block h-2 w-2 flex-shrink-0 rounded-full"
                     style={{ backgroundColor: ENTITY_COLORS[n.type] }}
                   />
-                  <span className="truncate text-sm text-slate-300">{n.label}</span>
-                  <span className="ml-auto text-xs text-slate-500">{ENTITY_LABELS[n.type]}</span>
+                  <span className="truncate text-sm text-[var(--foreground)]">{n.label}</span>
+                  <span className="ml-auto text-xs text-[var(--muted-foreground)]">{ENTITY_LABELS[n.type]}</span>
                 </li>
               ))}
             </ul>

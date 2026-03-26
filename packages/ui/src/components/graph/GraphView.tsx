@@ -26,21 +26,24 @@ interface GraphViewProps {
 }
 
 export default function GraphView({ graph, onSelectNode }: GraphViewProps) {
+  // Use a color that matches --background dark (oklch(0.236 0 0) ~= #383838, but we use something even darker)
+  const bgColor = '#2a2a2a'
+
   return (
     <SigmaContainer
       className="h-full w-full"
-      style={{ backgroundColor: '#0f172a' }}
+      style={{ backgroundColor: bgColor }}
       settings={{
         renderLabels: true,
         labelSize: 12,
         labelWeight: 'bold',
         labelColor: { color: '#e2e8f0' },
         labelRenderedSizeThreshold: 6,
-        defaultEdgeColor: '#334155',
+        defaultEdgeColor: '#444444',
         defaultEdgeType: 'line',
         edgeReducer: (_edge, data) => ({
           ...data,
-          color: data.color || '#334155',
+          color: data.color || '#444444',
           size: data.size || 0.5,
         }),
         nodeReducer: (_node, data) => ({

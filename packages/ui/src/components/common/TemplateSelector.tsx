@@ -64,14 +64,14 @@ export default function TemplateSelector({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative bg-white dark:bg-gray-800 rounded-xl shadow-xl p-6 max-w-lg w-full mx-4 max-h-[80vh] overflow-y-auto">
+      <div className="relative bg-[var(--background)] rounded-lg border border-[var(--border)] p-6 shadow-lg max-w-lg w-full mx-4 max-h-[80vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100">
+          <h3 className="text-lg font-semibold text-[var(--foreground)]">
             Utiliser un template
           </h3>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            className="text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors"
           >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -81,13 +81,13 @@ export default function TemplateSelector({
 
         {/* Genre selector */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
             Genre litteraire
           </label>
           <select
             value={genre}
             onChange={(e) => handleGenreChange(e.target.value)}
-            className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full h-9 rounded-md border border-[var(--input)] bg-transparent px-3 py-1 text-sm text-[var(--foreground)] focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]/50 focus:outline-none"
           >
             {GENRES.map((g) => (
               <option key={g} value={g}>{GENRE_LABELS[g] ?? g}</option>
@@ -97,36 +97,36 @@ export default function TemplateSelector({
 
         {/* Preview */}
         {loading ? (
-          <div className="py-8 text-center text-gray-400">Chargement...</div>
+          <div className="py-8 text-center text-[var(--muted-foreground)]">Chargement...</div>
         ) : preview ? (
           <div className="space-y-3 mb-4">
             {Object.entries(preview).map(([key, value]) => (
               <div key={key}>
-                <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">
+                <span className="text-xs font-medium text-[var(--muted-foreground)] uppercase">
                   {key}
                 </span>
-                <p className="text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 rounded-lg p-2 mt-0.5">
+                <p className="text-sm text-[var(--foreground)] bg-[var(--muted)] rounded-lg p-2 mt-0.5">
                   {value}
                 </p>
               </div>
             ))}
           </div>
         ) : (
-          <div className="py-8 text-center text-gray-400">Aucun template disponible</div>
+          <div className="py-8 text-center text-[var(--muted-foreground)]">Aucun template disponible</div>
         )}
 
         {/* Actions */}
-        <div className="flex justify-end gap-3 pt-2 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex justify-end gap-3 pt-2 border-t border-[var(--border)]">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
+            className="px-4 py-2 text-sm bg-[var(--secondary)] text-[var(--secondary-foreground)] rounded-md shadow-xs hover:opacity-80 transition-opacity"
           >
             Annuler
           </button>
           <button
             onClick={handleUse}
             disabled={!preview}
-            className="px-4 py-2 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50"
+            className="px-4 py-2 text-sm bg-[var(--primary)] text-[var(--primary-foreground)] rounded-md shadow-xs hover:opacity-90 disabled:opacity-50 transition-opacity"
           >
             Utiliser ce template
           </button>

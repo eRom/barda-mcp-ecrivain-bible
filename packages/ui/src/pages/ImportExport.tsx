@@ -135,24 +135,24 @@ export default function ImportExport() {
 
   return (
     <div className="p-6 lg:p-8 max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-8">Import / Export</h2>
+      <h2 className="text-2xl font-bold text-[var(--foreground)] mb-8">Import / Export</h2>
 
       {/* Export section */}
       <section className="mb-10">
-        <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">Exporter</h3>
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Exporter</h3>
+        <div className="bg-[var(--card)] rounded-lg border border-[var(--border)] p-5">
+          <p className="text-sm text-[var(--muted-foreground)] mb-4">
             Exportez votre bible en Markdown. Vous pouvez filtrer par type d'entite.
           </p>
           <div className="flex items-end gap-3">
             <div className="flex-1">
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-sm font-medium text-[var(--foreground)] mb-1">
                 Type
               </label>
               <select
                 value={exportType}
                 onChange={(e) => setExportType(e.target.value)}
-                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full h-9 rounded-md border border-[var(--input)] bg-transparent px-3 py-1 text-sm text-[var(--foreground)] focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]/50 focus:outline-none"
               >
                 {ENTITY_TYPES.map((t) => (
                   <option key={t.value} value={t.value}>{t.label}</option>
@@ -162,7 +162,7 @@ export default function ImportExport() {
             <button
               onClick={handleExport}
               disabled={exporting}
-              className="px-4 py-2 text-sm font-medium bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 whitespace-nowrap"
+              className="px-4 py-2 text-sm font-medium bg-[var(--primary)] text-[var(--primary-foreground)] rounded-md shadow-xs hover:opacity-90 disabled:opacity-50 whitespace-nowrap transition-opacity"
             >
               {exporting ? 'Export...' : 'Exporter en Markdown'}
             </button>
@@ -172,11 +172,11 @@ export default function ImportExport() {
 
       {/* Import section */}
       <section>
-        <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-4">Importer</h3>
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5">
+        <h3 className="text-lg font-semibold text-[var(--foreground)] mb-4">Importer</h3>
+        <div className="bg-[var(--card)] rounded-lg border border-[var(--border)] p-5">
           {!preview ? (
             <>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+              <p className="text-sm text-[var(--muted-foreground)] mb-4">
                 Importez un fichier JSON contenant des entites.
               </p>
               <div
@@ -185,14 +185,14 @@ export default function ImportExport() {
                 onDrop={handleDrop}
                 className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                   dragOver
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                    : 'border-gray-300 dark:border-gray-600'
+                    ? 'border-[var(--sidebar-primary)] bg-[var(--accent)]'
+                    : 'border-[var(--border)]'
                 }`}
               >
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+                <p className="text-sm text-[var(--muted-foreground)] mb-3">
                   Glissez un fichier .json ici
                 </p>
-                <label className="inline-block px-4 py-2 text-sm font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 cursor-pointer">
+                <label className="inline-block px-4 py-2 text-sm font-medium bg-[var(--secondary)] text-[var(--secondary-foreground)] rounded-md shadow-xs hover:opacity-80 cursor-pointer transition-opacity">
                   Ou choisir un fichier
                   <input
                     type="file"
@@ -208,55 +208,55 @@ export default function ImportExport() {
               {/* Preview */}
               <div className="mb-4">
                 <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <h4 className="text-sm font-medium text-[var(--foreground)]">
                     Fichier : {preview.fileName}
                   </h4>
                   <button
                     onClick={handleClearPreview}
-                    className="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                    className="text-xs text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
                   >
                     Changer de fichier
                   </button>
                 </div>
-                <div className="bg-gray-50 dark:bg-gray-700 rounded-lg p-3 space-y-1">
+                <div className="bg-[var(--muted)] rounded-lg p-3 space-y-1">
                   {Object.entries(preview.counts).map(([type, count]) => (
                     <div key={type} className="flex justify-between text-sm">
-                      <span className="text-gray-600 dark:text-gray-300 capitalize">{type}</span>
-                      <span className="font-medium text-gray-800 dark:text-gray-100">{count}</span>
+                      <span className="text-[var(--muted-foreground)] capitalize">{type}</span>
+                      <span className="font-medium text-[var(--foreground)]">{count}</span>
                     </div>
                   ))}
-                  <div className="border-t border-gray-200 dark:border-gray-600 pt-1 mt-1 flex justify-between text-sm font-semibold">
-                    <span className="text-gray-700 dark:text-gray-200">Total</span>
-                    <span className="text-gray-800 dark:text-gray-100">{preview.total}</span>
+                  <div className="border-t border-[var(--border)] pt-1 mt-1 flex justify-between text-sm font-semibold">
+                    <span className="text-[var(--foreground)]">Total</span>
+                    <span className="text-[var(--foreground)]">{preview.total}</span>
                   </div>
                 </div>
               </div>
 
               {/* on_conflict choice */}
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-[var(--foreground)] mb-2">
                   En cas de doublon
                 </label>
                 <div className="flex gap-4">
-                  <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300 cursor-pointer">
+                  <label className="flex items-center gap-2 text-sm text-[var(--foreground)] cursor-pointer">
                     <input
                       type="radio"
                       name="on_conflict"
                       value="skip"
                       checked={onConflict === 'skip'}
                       onChange={() => setOnConflict('skip')}
-                      className="text-blue-500"
+                      className="accent-[var(--sidebar-primary)]"
                     />
                     Ignorer les doublons
                   </label>
-                  <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300 cursor-pointer">
+                  <label className="flex items-center gap-2 text-sm text-[var(--foreground)] cursor-pointer">
                     <input
                       type="radio"
                       name="on_conflict"
                       value="update"
                       checked={onConflict === 'update'}
                       onChange={() => setOnConflict('update')}
-                      className="text-blue-500"
+                      className="accent-[var(--sidebar-primary)]"
                     />
                     Ecraser les doublons
                   </label>
@@ -267,16 +267,16 @@ export default function ImportExport() {
               <button
                 onClick={handleImport}
                 disabled={importMutation.isPending}
-                className="px-4 py-2 text-sm font-medium bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 disabled:opacity-50"
+                className="px-4 py-2 text-sm font-medium bg-[var(--primary)] text-[var(--primary-foreground)] rounded-md shadow-xs hover:opacity-90 disabled:opacity-50 transition-opacity"
               >
                 {importMutation.isPending ? 'Importation...' : `Importer ${preview.total} entites`}
               </button>
 
               {/* Import result */}
               {importResult && (
-                <div className="mt-4 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-3">
-                  <h4 className="text-sm font-medium text-emerald-800 dark:text-emerald-300 mb-2">Resultat</h4>
-                  <div className="space-y-1 text-sm text-emerald-700 dark:text-emerald-400">
+                <div className="mt-4 bg-emerald-500/10 border border-emerald-500/30 rounded-lg p-3">
+                  <h4 className="text-sm font-medium text-emerald-400 mb-2">Resultat</h4>
+                  <div className="space-y-1 text-sm text-emerald-400">
                     {importResult.imported !== undefined && (
                       <p>Importes : {String(importResult.imported)}</p>
                     )}
@@ -284,7 +284,7 @@ export default function ImportExport() {
                       <p>Ignores : {String(importResult.skipped)}</p>
                     )}
                     {importResult.errors !== undefined && Number(importResult.errors) > 0 && (
-                      <p className="text-red-600 dark:text-red-400">Erreurs : {String(importResult.errors)}</p>
+                      <p className="text-[var(--destructive)]">Erreurs : {String(importResult.errors)}</p>
                     )}
                     {typeof importResult.message === 'string' && (
                       <p>{importResult.message}</p>

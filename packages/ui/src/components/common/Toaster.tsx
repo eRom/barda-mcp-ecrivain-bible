@@ -10,14 +10,16 @@ export default function Toaster() {
       {toasts.map((t) => (
         <div
           key={t.id}
-          className={`pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg text-white text-sm min-w-[280px] max-w-[400px] animate-[fadeIn_0.2s_ease-out] ${
-            t.type === 'success' ? 'bg-emerald-600' : 'bg-red-600'
+          className={`pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-lg shadow-lg text-sm min-w-[280px] max-w-[400px] animate-[fadeIn_0.2s_ease-out] border ${
+            t.type === 'success'
+              ? 'bg-[var(--card)] border-emerald-500/30 text-emerald-400'
+              : 'bg-[var(--card)] border-[var(--destructive)]/30 text-[var(--destructive)]'
           }`}
         >
           <span className="flex-1">{t.message}</span>
           <button
             onClick={() => dismiss(t.id)}
-            className="text-white/70 hover:text-white shrink-0"
+            className="text-[var(--muted-foreground)] hover:text-[var(--foreground)] shrink-0"
           >
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

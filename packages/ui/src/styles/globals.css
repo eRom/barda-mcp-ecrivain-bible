@@ -2,6 +2,84 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+:root {
+  --background: oklch(0.985 0 0);
+  --foreground: oklch(0.236 0 0);
+  --card: oklch(0.985 0 0);
+  --card-foreground: oklch(0.236 0 0);
+  --primary: oklch(0.236 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.92 0.004 286.32);
+  --secondary-foreground: oklch(0.236 0 0);
+  --muted: oklch(0.92 0.004 286.32);
+  --muted-foreground: oklch(0.55 0.015 286);
+  --accent: oklch(0.92 0.004 286.32);
+  --accent-foreground: oklch(0.236 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(0 0 0 / 10%);
+  --input: oklch(0 0 0 / 15%);
+  --ring: oklch(0.552 0.016 285.938);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.95 0.005 90);
+  --sidebar-foreground: oklch(0.236 0 0);
+  --sidebar-border: oklch(0 0 0 / 8%);
+  --sidebar-accent: oklch(0.9 0.005 90);
+  --sidebar-primary: oklch(49.107% 0.24121 264.248);
+}
+
+.dark {
+  --background: oklch(0.236 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.274 0.003 286);
+  --card-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.92 0.004 286.32);
+  --primary-foreground: oklch(0.236 0 0);
+  --secondary: oklch(0.31 0.003 286);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.31 0.003 286);
+  --muted-foreground: oklch(0.705 0.015 286.067);
+  --accent: oklch(0.31 0.003 286);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.552 0.016 285.938);
+  --sidebar: oklch(0.269 0.005 90);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 8%);
+  --sidebar-accent: oklch(0.33 0.005 90);
+  --sidebar-primary: oklch(49.107% 0.24121 264.248);
+}
+
+@layer base {
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+
+  ::selection {
+    background-color: var(--sidebar-primary);
+    color: white;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--muted-foreground);
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--foreground);
+  }
+}
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }

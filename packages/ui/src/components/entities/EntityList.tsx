@@ -29,29 +29,29 @@ export default function EntityList<T>({
   return (
     <div className="p-6 lg:p-8 max-w-6xl mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">{entityType}</h2>
+        <h2 className="text-2xl font-bold text-[var(--foreground)]">{entityType}</h2>
         <Link
           to={createPath}
-          className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
+          className="px-4 py-2 bg-[var(--primary)] text-[var(--primary-foreground)] rounded-md shadow-xs hover:opacity-90 transition-opacity text-sm"
         >
           + Creer
         </Link>
       </div>
 
       {isLoading && (
-        <div className="text-gray-500">Chargement...</div>
+        <div className="text-[var(--muted-foreground)]">Chargement...</div>
       )}
 
       {error && (
-        <div className="text-red-500">Erreur : {(error as Error).message}</div>
+        <div className="text-[var(--destructive)]">Erreur : {(error as Error).message}</div>
       )}
 
       {!isLoading && !error && items.length === 0 && (
-        <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-12 text-center">
-          <p className="text-gray-500 dark:text-gray-400 mb-4">Aucun element pour le moment.</p>
+        <div className="bg-[var(--card)] rounded-lg border border-[var(--border)] p-12 text-center">
+          <p className="text-[var(--muted-foreground)] mb-4">Aucun element pour le moment.</p>
           <Link
             to={createPath}
-            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors text-sm"
+            className="px-4 py-2 bg-[var(--primary)] text-[var(--primary-foreground)] rounded-md shadow-xs hover:opacity-90 transition-opacity text-sm"
           >
             Creer le premier
           </Link>
@@ -72,17 +72,17 @@ export default function EntityList<T>({
               <button
                 onClick={() => setOffset(Math.max(0, offset - limit))}
                 disabled={offset === 0}
-                className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg disabled:opacity-30 hover:bg-gray-50 dark:hover:bg-gray-700"
+                className="px-3 py-1.5 text-sm bg-[var(--secondary)] text-[var(--secondary-foreground)] rounded-md shadow-xs hover:opacity-80 disabled:opacity-30 transition-opacity"
               >
                 Precedent
               </button>
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-[var(--muted-foreground)]">
                 {offset + 1} - {offset + items.length}
               </span>
               <button
                 onClick={() => setOffset(offset + limit)}
                 disabled={items.length < limit}
-                className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg disabled:opacity-30 hover:bg-gray-50 dark:hover:bg-gray-700"
+                className="px-3 py-1.5 text-sm bg-[var(--secondary)] text-[var(--secondary-foreground)] rounded-md shadow-xs hover:opacity-80 disabled:opacity-30 transition-opacity"
               >
                 Suivant
               </button>

@@ -33,7 +33,7 @@ export default function LocationDetail() {
   const deleteMutation = useMcpMutation('delete_location', ['list_locations'])
 
   if (!isNew && isLoading) {
-    return <div className="p-8 text-gray-500">Chargement...</div>
+    return <div className="p-8 text-[var(--muted-foreground)]">Chargement...</div>
   }
 
   function handleSave(formData: Record<string, string>) {
@@ -69,14 +69,14 @@ export default function LocationDetail() {
   return (
     <div className="p-6 lg:p-8 max-w-3xl mx-auto">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+        <h2 className="text-2xl font-bold text-[var(--foreground)]">
           {isNew ? 'Nouveau lieu' : data?.name ?? 'Lieu'}
         </h2>
         {isNew && (
           <button
             type="button"
             onClick={() => setTemplateOpen(true)}
-            className="px-3 py-1.5 text-sm border border-violet-300 dark:border-violet-600 text-violet-600 dark:text-violet-400 rounded-lg hover:bg-violet-50 dark:hover:bg-violet-900/30"
+            className="px-3 py-1.5 text-sm bg-[var(--secondary)] text-[var(--secondary-foreground)] rounded-md shadow-xs hover:opacity-80 transition-opacity"
           >
             Utiliser un template
           </button>

@@ -43,7 +43,7 @@ export default function EventDetail() {
   const deleteMutation = useMcpMutation('delete_event', ['list_events'])
 
   if (!isNew && isLoading) {
-    return <div className="p-8 text-gray-500">Chargement...</div>
+    return <div className="p-8 text-[var(--muted-foreground)]">Chargement...</div>
   }
 
   const characters = charsData?.characters ?? []
@@ -90,7 +90,7 @@ export default function EventDetail() {
 
   return (
     <div className="p-6 lg:p-8 max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">
+      <h2 className="text-2xl font-bold text-[var(--foreground)] mb-6">
         {isNew ? 'Nouvel evenement' : data?.title ?? 'Evenement'}
       </h2>
 
@@ -106,25 +106,25 @@ export default function EventDetail() {
 
       {/* Wiki-style links for associated entities (read mode) */}
       {!isNew && data && (
-        <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg space-y-3">
+        <div className="mt-6 p-4 bg-[var(--card)] border border-[var(--border)] rounded-lg space-y-3">
           <div>
-            <span className="text-sm font-medium text-gray-500">Lieu : </span>
+            <span className="text-sm font-medium text-[var(--muted-foreground)]">Lieu : </span>
             {selectedLocation ? (
               (() => {
                 const loc = locations.find((l) => l.id === selectedLocation)
                 return loc ? (
                   <EntityLink entityType="location" entityId={loc.id} label={loc.name} description={loc.description} />
                 ) : (
-                  <span className="text-sm text-gray-400">--</span>
+                  <span className="text-sm text-[var(--muted-foreground)]">--</span>
                 )
               })()
             ) : (
-              <span className="text-sm text-gray-400">Aucun</span>
+              <span className="text-sm text-[var(--muted-foreground)]">Aucun</span>
             )}
           </div>
           {selectedChars.length > 0 && (
             <div>
-              <span className="text-sm font-medium text-gray-500">Personnages : </span>
+              <span className="text-sm font-medium text-[var(--muted-foreground)]">Personnages : </span>
               <span className="inline-flex flex-wrap gap-x-2 gap-y-1">
                 {selectedChars.map((charId) => {
                   const char = characters.find((c) => c.id === charId)
@@ -140,11 +140,11 @@ export default function EventDetail() {
 
       {/* Location selector */}
       <div className="mt-6">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Lieu</label>
+        <label className="block text-sm font-medium text-[var(--foreground)] mb-1">Lieu</label>
         <select
           value={selectedLocation}
           onChange={(e) => setSelectedLocation(e.target.value)}
-          className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full h-9 rounded-md border border-[var(--input)] bg-transparent px-3 py-1 text-sm text-[var(--foreground)] focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]/50 focus:outline-none"
         >
           <option value="">-- Aucun lieu --</option>
           {locations.map((loc) => (
@@ -155,17 +155,17 @@ export default function EventDetail() {
 
       {/* Characters selector */}
       <div className="mt-4">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Personnages</label>
+        <label className="block text-sm font-medium text-[var(--foreground)] mb-2">Personnages</label>
         <div className="flex flex-wrap gap-2">
           {characters.map((char) => (
             <button
               key={char.id}
               type="button"
               onClick={() => toggleChar(char.id)}
-              className={`px-3 py-1 text-sm rounded-full border transition-colors ${
+              className={`px-3 py-1 text-sm rounded-full border transition-all duration-200 ${
                 selectedChars.includes(char.id)
-                  ? 'bg-blue-500 text-white border-blue-500'
-                  : 'bg-white dark:bg-gray-700 text-gray-600 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-blue-300'
+                  ? 'bg-blue-500/10 text-blue-400 border-blue-500/30'
+                  : 'bg-transparent text-[var(--muted-foreground)] border-[var(--border)] hover:border-blue-500/30'
               }`}
             >
               {char.name}

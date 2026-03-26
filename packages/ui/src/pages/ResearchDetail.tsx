@@ -28,7 +28,7 @@ export default function ResearchDetail() {
   const deleteMutation = useMcpMutation('delete_research', ['list_research'])
 
   if (!isNew && isLoading) {
-    return <div className="p-8 text-gray-500">Chargement...</div>
+    return <div className="p-8 text-[var(--muted-foreground)]">Chargement...</div>
   }
 
   function handleSave(formData: Record<string, string>) {
@@ -61,7 +61,7 @@ export default function ResearchDetail() {
 
   return (
     <div className="p-6 lg:p-8 max-w-3xl mx-auto">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">
+      <h2 className="text-2xl font-bold text-[var(--foreground)] mb-6">
         {isNew ? 'Nouvelle recherche' : data?.topic ?? 'Recherche'}
       </h2>
       <EntityForm

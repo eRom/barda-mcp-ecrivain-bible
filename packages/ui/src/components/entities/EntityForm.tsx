@@ -79,7 +79,7 @@ export default function EntityForm({
                 <button
                   type="button"
                   onClick={() => setEditing(true)}
-                  className="px-3 py-1.5 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                  className="px-4 py-2 text-sm bg-[var(--primary)] text-[var(--primary-foreground)] rounded-md shadow-xs hover:opacity-90 transition-opacity"
                 >
                   Editer
                 </button>
@@ -87,7 +87,7 @@ export default function EntityForm({
                   <button
                     type="button"
                     onClick={() => setShowDeleteDialog(true)}
-                    className="px-3 py-1.5 text-sm border border-red-300 dark:border-red-700 text-red-500 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30"
+                    className="px-4 py-2 text-sm bg-[var(--destructive)] text-white rounded-md shadow-xs hover:opacity-90 transition-opacity"
                   >
                     Supprimer
                   </button>
@@ -98,14 +98,14 @@ export default function EntityForm({
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="px-3 py-1.5 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50"
+                  className="px-4 py-2 text-sm bg-[var(--primary)] text-[var(--primary-foreground)] rounded-md shadow-xs hover:opacity-90 disabled:opacity-50 transition-opacity"
                 >
                   {isSaving ? 'Sauvegarde...' : 'Sauvegarder'}
                 </button>
                 <button
                   type="button"
                   onClick={handleCancel}
-                  className="px-3 py-1.5 text-sm border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
+                  className="px-4 py-2 text-sm bg-[var(--secondary)] text-[var(--secondary-foreground)] rounded-md shadow-xs hover:opacity-80 transition-opacity"
                 >
                   Annuler
                 </button>
@@ -113,7 +113,7 @@ export default function EntityForm({
             )}
 
             {timestamps && (
-              <div className="text-xs text-gray-400">
+              <div className="text-xs text-[var(--muted-foreground)]">
                 Cree le {formatTimestamp(timestamps.created_at)}
                 {' | '}
                 Modifie le {formatTimestamp(timestamps.updated_at)}
@@ -127,7 +127,7 @@ export default function EntityForm({
             <button
               type="submit"
               disabled={isSaving}
-              className="px-3 py-1.5 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50"
+              className="px-4 py-2 text-sm bg-[var(--primary)] text-[var(--primary-foreground)] rounded-md shadow-xs hover:opacity-90 disabled:opacity-50 transition-opacity"
             >
               {isSaving ? 'Creation...' : 'Creer'}
             </button>
@@ -136,9 +136,9 @@ export default function EntityForm({
 
         {fields.map((field) => (
           <div key={field.name}>
-            <label htmlFor={`field-${field.name}`} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+            <label htmlFor={`field-${field.name}`} className="block text-sm font-medium text-[var(--foreground)] mb-1">
               {field.label}
-              {field.required && <span className="text-red-500 ml-0.5">*</span>}
+              {field.required && <span className="text-[var(--destructive)] ml-0.5">*</span>}
             </label>
             {field.type === 'textarea' ? (
               <textarea
@@ -148,7 +148,7 @@ export default function EntityForm({
                 disabled={!editing}
                 required={field.required}
                 rows={5}
-                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 dark:disabled:bg-gray-800 disabled:text-gray-600 dark:disabled:text-gray-400"
+                className="w-full h-auto rounded-md border border-[var(--input)] bg-transparent px-3 py-2 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]/50 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
               />
             ) : (
               <input
@@ -158,7 +158,7 @@ export default function EntityForm({
                 onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
                 disabled={!editing}
                 required={field.required}
-                className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-50 dark:disabled:bg-gray-800 disabled:text-gray-600 dark:disabled:text-gray-400"
+                className="w-full h-9 rounded-md border border-[var(--input)] bg-transparent px-3 py-1 text-sm text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]/50 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed"
               />
             )}
           </div>
