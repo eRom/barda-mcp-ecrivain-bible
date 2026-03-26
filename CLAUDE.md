@@ -18,19 +18,15 @@ Serveur MCP standalone en TypeScript pour gerer une bible d'ecrivain — base de
 # Depuis la racine (monorepo)
 pnpm build                    # Build mcp + ui
 pnpm test                     # Tests mcp + ui
-pnpm --filter mcp dev         # MCP mode stdio (dev)
-pnpm --filter mcp dev -- --ui # MCP mode HTTP + UI (dev)
-pnpm --filter ui dev          # UI Vite dev server (avec proxy vers MCP)
-
-# Depuis packages/mcp/
-pnpm build        # Build production (tsup)
-pnpm test         # Tests MCP (vitest)
-pnpm db:generate  # Generer migrations (drizzle-kit)
-
-# Depuis packages/ui/
-pnpm dev          # Vite dev server
-pnpm build        # Build production (copie dans packages/mcp/public/)
-pnpm test         # Tests UI (vitest + testing-library)
+pnpm dev:mcp                      # MCP mode stdio (dev)
+pnpm dev                          # MCP mode HTTP + UI (dev)
+pnpm dev:ui                       # UI Vite dev server seul (avec proxy vers MCP)
+pnpm --filter @barda/mcp build    # Build MCP (tsup)
+pnpm --filter @barda/mcp test     # Tests MCP (61 tests)
+pnpm --filter @barda/ui build     # Build UI (Vite)
+pnpm --filter @barda/ui test      # Tests UI (29 tests)
+pnpm build                        # Build tout (mcp + ui)
+pnpm test                         # Tests tout (90 tests)
 ```
 
 ## Structure (monorepo)

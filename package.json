@@ -4,7 +4,9 @@
   "scripts": {
     "build": "pnpm -r build",
     "test": "pnpm -r test",
-    "dev": "pnpm --filter barda-ecrivain-bible dev",
+    "dev:mcp": "pnpm --filter @barda/mcp dev",
+    "dev:ui": "pnpm --filter @barda/ui dev",
+    "dev": "pnpm --filter @barda/mcp dev -- --ui",
     "start": "npx barda-ecrivain-bible --ui"
   },
   "pnpm": {

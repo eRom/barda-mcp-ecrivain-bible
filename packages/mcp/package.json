@@ -1,5 +1,5 @@
 {
-  "name": "barda-ecrivain-bible",
+  "name": "@barda/mcp",
   "version": "0.1.0",
   "type": "module",
   "description": "Serveur MCP pour gérer une bible d'écrivain — base de connaissances structurée d'un univers narratif",
