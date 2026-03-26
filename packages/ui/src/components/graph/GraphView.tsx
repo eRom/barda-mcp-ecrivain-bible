@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { SigmaContainer, useLoadGraph } from '@react-sigma/core'
+import { SigmaContainer, useLoadGraph, useSigma } from '@react-sigma/core'
 import '@react-sigma/core/lib/style.css'
 import Graph from 'graphology'
 import GraphEvents from './GraphEvents'
@@ -22,13 +22,89 @@ function GraphLoader({ graph }: GraphLoaderProps) {
   return null
 }
 
+/** Highlights the selected node's branch by dimming everything else */
+function GraphHighlighter({ selectedNodeId }: { selectedNodeId: string | null }) {
+  const sigma = useSigma()
+
+  useEffect(() => {
+    if (!selectedNodeId) {
+      // Reset: remove all highlight overrides
+      sigma.setSetting('nodeReducer', (_node, data) => ({ ...data }))
+      sigma.setSetting('edgeReducer', (_edge, data) => ({
+        ...data,
+        color: data.color || '#444444',
+        size: data.size || 0.5,
+      }))
+      sigma.refresh()
+      return
+    }
+
+    const graph = sigma.getGraph()
+    if (!graph.hasNode(selectedNodeId)) return
+
+    // Build the set of connected nodes
+    const connectedNodes = new Set<string>()
+    connectedNodes.add(selectedNodeId)
+    graph.forEachNeighbor(selectedNodeId, (neighbor) => {
+      connectedNodes.add(neighbor)
+    })
+
+    // Build the set of connected edges
+    const connectedEdges = new Set<string>()
+    graph.forEachEdge(selectedNodeId, (edge) => {
+      connectedEdges.add(edge)
+    })
+
+    sigma.setSetting('nodeReducer', (node, data) => {
+      if (connectedNodes.has(node)) {
+        return {
+          ...data,
+          // Selected node gets a highlight ring effect via larger size
+          size: node === selectedNodeId ? (data.size || 10) * 1.4 : data.size,
+          zIndex: 1,
+        }
+      }
+      // Dim non-connected nodes
+      return {
+        ...data,
+        color: '#333333',
+        size: (data.size || 10) * 0.6,
+        label: '',
+        zIndex: 0,
+      }
+    })
+
+    sigma.setSetting('edgeReducer', (edge, data) => {
+      if (connectedEdges.has(edge)) {
+        return {
+          ...data,
+          color: '#888888',
+          size: 1.5,
+          zIndex: 1,
+        }
+      }
+      // Dim non-connected edges
+      return {
+        ...data,
+        color: '#1a1a1a',
+        size: 0.2,
+        zIndex: 0,
+      }
+    })
+
+    sigma.refresh()
+  }, [sigma, selectedNodeId])
+
+  return null
+}
+
 interface GraphViewProps {
   graph: Graph
   onSelectNode: (node: GraphNode | null) => void
+  selectedNodeId?: string | null
 }
 
-export default function GraphView({ graph, onSelectNode }: GraphViewProps) {
-  // Use a color that matches --background dark (oklch(0.236 0 0) ~= #383838, but we use something even darker)
+export default function GraphView({ graph, onSelectNode, selectedNodeId }: GraphViewProps) {
   const bgColor = '#2a2a2a'
 
   return (
@@ -59,6 +135,7 @@ export default function GraphView({ graph, onSelectNode }: GraphViewProps) {
       <GraphLayout />
       <GraphControls />
       <GraphLegend />
+      <GraphHighlighter selectedNodeId={selectedNodeId || null} />
     </SigmaContainer>
   )
 }

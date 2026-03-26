@@ -32,7 +32,7 @@ export default function Graph() {
   return (
     <div className="relative flex" style={{ height: 'calc(100vh - 38px)' }}>
       <div className="relative flex-1">
-        <GraphView graph={graph} onSelectNode={setSelectedNode} />
+        <GraphView graph={graph} onSelectNode={setSelectedNode} selectedNodeId={selectedNode?.id} />
       </div>
       {selectedNode && <NodeDetail node={selectedNode} graph={graph} onClose={() => setSelectedNode(null)} />}
     </div>
