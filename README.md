@@ -85,7 +85,11 @@ Ajouter dans les settings MCP :
 
 ### Cruchot (barda)
 
-Ajouter la definition dans la configuration barda :
+1. Installation de **Cruchot** : https://github.com/eRom/cruchot
+2. Télécharger ou cloner le repo puis : Cruchot > Personnaliser > Brigade > Importer un barda
+
+Ou : 
+Ajouter la definition dans la configuration du MCP dans **Cruchot** :
 
 ```json
 {
