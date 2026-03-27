@@ -1,35 +1,59 @@
 import { useState, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 export default function SearchBar() {
   const [query, setQuery] = useState('')
   const navigate = useNavigate()
+  const location = useLocation()
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const isUserInputRef = useRef(false)
+  const navigateRef = useRef(navigate)
+  navigateRef.current = navigate
 
+  // Sync SearchBar with URL when on /search
   useEffect(() => {
-    if (!query.trim()) return
+    if (location.pathname === '/search') {
+      const urlQuery = new URLSearchParams(location.search).get('q') ?? ''
+      setQuery(urlQuery)
+    }
+  }, [location.pathname, location.search])
+
+  // Only auto-navigate when user is actively typing
+  useEffect(() => {
+    if (!isUserInputRef.current) return
+    isUserInputRef.current = false
 
     if (debounceRef.current) clearTimeout(debounceRef.current)
 
+    if (!query.trim()) return
+
     debounceRef.current = setTimeout(() => {
-      navigate(`/search?q=${encodeURIComponent(query.trim())}`)
+      navigateRef.current(`/search?q=${encodeURIComponent(query.trim())}`)
     }, 300)
 
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current)
     }
-  }, [query, navigate])
+  }, [query])
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    isUserInputRef.current = true
+    setQuery(e.target.value)
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (debounceRef.current) clearTimeout(debounceRef.current)
+    isUserInputRef.current = false
     const trimmed = query.trim()
     if (trimmed) {
-      navigate(`/search?q=${encodeURIComponent(trimmed)}`)
+      navigateRef.current(`/search?q=${encodeURIComponent(trimmed)}`)
     }
   }
 
   function handleClear() {
+    isUserInputRef.current = false
+    if (debounceRef.current) clearTimeout(debounceRef.current)
     setQuery('')
   }
 
@@ -51,7 +75,7 @@ export default function SearchBar() {
       <input
         type="text"
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={handleChange}
         placeholder="Rechercher dans la bible..."
         className="w-full pl-9 pr-8 h-9 text-sm rounded-md border border-[var(--input)] bg-transparent text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]/50 focus:outline-none"
       />

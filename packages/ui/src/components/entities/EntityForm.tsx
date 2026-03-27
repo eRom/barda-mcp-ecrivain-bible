@@ -12,7 +12,7 @@ interface EntityFormProps {
   fields: FieldConfig[]
   initialData?: Record<string, string | null>
   isNew?: boolean
-  onSave: (data: Record<string, string>) => void
+  onSave: (data: Record<string, string>) => Promise<void> | void
   onDelete?: () => void
   isSaving?: boolean
   timestamps?: { created_at: number; updated_at: number }
@@ -49,15 +49,19 @@ export default function EntityForm({
     setFormData(data)
   }, [initialData, fields])
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     const cleaned: Record<string, string> = {}
     fields.forEach((f) => {
       const val = formData[f.name]?.trim() ?? ''
       if (val) cleaned[f.name] = val
     })
-    onSave(cleaned)
-    if (!isNew) setEditing(false)
+    try {
+      await onSave(cleaned)
+      if (!isNew) setEditing(false)
+    } catch {
+      // Rester en mode edition si erreur
+    }
   }
 
   function handleCancel() {

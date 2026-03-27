@@ -31,21 +31,20 @@ export default function ResearchDetail() {
     return <div className="p-8 text-[var(--muted-foreground)]">Chargement...</div>
   }
 
-  function handleSave(formData: Record<string, string>) {
-    if (isNew) {
-      createMutation.mutate(formData, {
-        onSuccess: (result) => {
-          const created = result as Research
-          toast.success('Recherche creee')
-          navigate(`/research/${created.id}`, { replace: true })
-        },
-        onError: (err) => toast.error(err.message),
-      })
-    } else {
-      updateMutation.mutate({ id, ...formData }, {
-        onSuccess: () => toast.success('Fiche mise a jour'),
-        onError: (err) => toast.error(err.message),
-      })
+  async function handleSave(formData: Record<string, string>) {
+    try {
+      if (isNew) {
+        const result = await createMutation.mutateAsync(formData)
+        const created = result as Research
+        toast.success('Recherche creee')
+        navigate(`/research/${created.id}`, { replace: true })
+      } else {
+        await updateMutation.mutateAsync({ id, ...formData })
+        toast.success('Fiche mise a jour')
+      }
+    } catch (err) {
+      toast.error((err as Error).message)
+      throw err
     }
   }
 
@@ -71,7 +70,7 @@ export default function ResearchDetail() {
         onSave={handleSave}
         onDelete={isNew ? undefined : handleDelete}
         isSaving={createMutation.isPending || updateMutation.isPending}
-        timestamps={data ? { created_at: data.created_at, updated_at: data.updated_at } : undefined}
+        timestamps={data ? { created_at: (data as any).createdAt ?? data.created_at, updated_at: (data as any).updatedAt ?? data.updated_at } : undefined}
       />
     </div>
   )

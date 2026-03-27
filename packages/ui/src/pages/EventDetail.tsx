@@ -55,26 +55,25 @@ export default function EventDetail() {
     )
   }
 
-  function handleSave(formData: Record<string, string>) {
+  async function handleSave(formData: Record<string, string>) {
     const payload = {
       ...formData,
       characters: JSON.stringify(selectedChars),
       location_id: selectedLocation || undefined,
     }
-    if (isNew) {
-      createMutation.mutate(payload, {
-        onSuccess: (result) => {
-          const created = result as Event
-          toast.success('Evenement cree')
-          navigate(`/events/${created.id}`, { replace: true })
-        },
-        onError: (err) => toast.error(err.message),
-      })
-    } else {
-      updateMutation.mutate({ id, ...payload }, {
-        onSuccess: () => toast.success('Fiche mise a jour'),
-        onError: (err) => toast.error(err.message),
-      })
+    try {
+      if (isNew) {
+        const result = await createMutation.mutateAsync(payload)
+        const created = result as Event
+        toast.success('Evenement cree')
+        navigate(`/events/${created.id}`, { replace: true })
+      } else {
+        await updateMutation.mutateAsync({ id, ...payload })
+        toast.success('Fiche mise a jour')
+      }
+    } catch (err) {
+      toast.error((err as Error).message)
+      throw err
     }
   }
 
@@ -101,7 +100,7 @@ export default function EventDetail() {
         onSave={handleSave}
         onDelete={isNew ? undefined : handleDelete}
         isSaving={createMutation.isPending || updateMutation.isPending}
-        timestamps={data ? { created_at: data.created_at, updated_at: data.updated_at } : undefined}
+        timestamps={data ? { created_at: (data as any).createdAt ?? data.created_at, updated_at: (data as any).updatedAt ?? data.updated_at } : undefined}
       />
 
       {/* Wiki-style links for associated entities (read mode) */}
